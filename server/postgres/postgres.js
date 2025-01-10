@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize';
 import createUserModel from '../models/userSchema.js';
+import createArticleModel from '../models/articleSchema.js'; // Import the article model
 
 const sequelize = new Sequelize('pradip', 'pradip', 'pradip', {
     host: 'localhost',
@@ -7,6 +8,7 @@ const sequelize = new Sequelize('pradip', 'pradip', 'pradip', {
 });
 
 let userModel = null;
+let articleModel = null; // Declare the article model
 
 const grantPermissions = async () => {
     try {
@@ -25,9 +27,15 @@ const connectToDatabase = async () => {
         
         await grantPermissions();
         
-        // Initialize the User model
+        // Initialize models
         userModel = createUserModel(sequelize);
-        
+        articleModel = createArticleModel(sequelize);
+
+        // Define associations if any (example)
+        userModel.hasMany(articleModel, { foreignKey: 'authorId' });
+        articleModel.belongsTo(userModel, { foreignKey: 'authorId' });
+
+        // Sync all models
         await sequelize.sync();
         console.log('All models were synchronized successfully.');
     } catch (error) {
@@ -35,5 +43,5 @@ const connectToDatabase = async () => {
     }
 };
 
-export { sequelize };
+export { sequelize, userModel, articleModel }; // Export models
 export default connectToDatabase;

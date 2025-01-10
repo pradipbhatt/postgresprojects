@@ -3,6 +3,7 @@ import dotenv from 'dotenv'; // Import dotenv to handle environment variables
 import cookieParser from 'cookie-parser'; // Import cookie-parser to handle cookies
 import connectToDatabase from './postgres/postgres.js'; // Ensure correct path
 import userRoutes from './routes/userRoutes.js'; // Import the user routes
+import articleRoutes from './routes/articleRoutes.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 // Use the user routes for the /api endpoint
 app.use('/api', userRoutes);
+app.use('/api', articleRoutes);
 
 // Call the database connection
 connectToDatabase();
