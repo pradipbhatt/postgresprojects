@@ -1,7 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/Login';  // Assuming Login.tsx is in the same directory
-import Register from './components/Register';  // Assuming Register.tsx is in the same directory
-import Dashboard from './components/Dashboard'; // Create Dashboard.tsx for the dashboard page
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import NotFound from './components/NotFound';  // Import the NotFound component
+import Profile from './components/Profile';  // Import the Profile component
+import About from './components/About';
+import Services from './components/Services';
+import Contact from './components/Contact';
+import Articles from './components/Articles';
 
 const App = () => {
   return (
@@ -14,11 +20,25 @@ const App = () => {
           {/* Route for Register page */}
           <Route path="/register" element={<Register />} />
 
-          {/* Route for Dashboard page (you can replace this with your actual dashboard) */}
+          {/* Route for Dashboard page */}
           <Route path="/dashboard" element={<Dashboard />} />
-          
-          {/* Redirect to Login if no route matches */}
-          <Route path="*" element={<Login />} />
+          {/* profile */}
+          <Route path="/profile" element={<Profile />} />
+          {/* about */}
+          {/* SErvices page */}
+          <Route path="/services" element={<Services />} />
+          {/* Contact page */}
+          {/* Contact page */}
+          <Route path="/contact" element={<Contact />} />  {/* Display NotFound page for any unmatched routes */}
+
+          {/* Route for Home page */}
+          {/* ARticles routes */}
+          <Route path="/articles" element={<Articles />} />
+          <Route path="/" element={<Login />} />  {/* Redirect to Login page if no path is provided */}
+          <Route path="/about" element={<About/>} />  {/* Redirect to Login page if no path is provided */}
+
+          {/* Catch-all route for undefined paths */}
+          <Route path="*" element={<NotFound />} />  {/* Display NotFound page for any unmatched routes */}
         </Routes>
       </div>
     </Router>

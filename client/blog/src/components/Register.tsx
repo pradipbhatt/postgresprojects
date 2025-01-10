@@ -1,28 +1,26 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const [step, setStep] = useState(1);
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('pradipbhatt.cse@fwu.edu.np');
-  const [password, setPassword] = useState('1111');
-  const [designation, setDesignation] = useState('Software Engineer');
-  const [empID, setEmpID] = useState('EMP03301');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [designation, setDesignation] = useState('');
+  const [empID, setEmpID] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isAgreed, setIsAgreed] = useState(false); // State for the terms and conditions checkbox
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    console.log("Registration data:", {
-      name,
-      email,
-      password,
-      designation,
-      empID,
-    });
-  
+
+    if (!isAgreed) {
+      setErrorMessage('You must agree to the terms and conditions.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:8080/api/register/', {
         name,
@@ -31,19 +29,16 @@ const Register = () => {
         designation,
         empID,
       });
-  
-      console.log("Registration successful:", response.data);
-  
+
+      console.log('Registration successful:', response.data);
+
       // Redirect to login after successful registration
       navigate('/login');
     } catch (error: any) {
-      console.error("Registration failed:", error);
-  
-      // Set error message
+      console.error('Registration failed:', error);
       setErrorMessage(error.response?.data?.message || 'Registration failed');
     }
   };
-  
 
   const nextStep = () => {
     setErrorMessage(''); // Clear error message when moving to next step
@@ -60,8 +55,8 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-md shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Register</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-md shadow-md bg-light">
+      <h2 className="text-2xl font-semibold mb-4 text-primary">Register</h2>
       <form onSubmit={handleRegister}>
         {step === 1 && (
           <div className="mb-4">
@@ -138,6 +133,22 @@ const Register = () => {
           </div>
         )}
 
+        {/* Terms and Conditions Checkbox */}
+        {step === 5 && (
+          <div className="flex items-center mb-4">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={isAgreed}
+              onChange={() => setIsAgreed(!isAgreed)}
+              className="mr-2"
+            />
+            <label htmlFor="terms" className="text-sm text-gray-600">
+              I agree to the <a href="/terms" className="text-blue-500 hover:underline">Terms and Conditions</a>.
+            </label>
+          </div>
+        )}
+
         {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
 
         <div className="flex justify-between mt-6">
@@ -153,7 +164,7 @@ const Register = () => {
           {step < 5 ? (
             <button
               type="button"
-              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+              className="w-1/4 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
               onClick={nextStep}
             >
               Next
@@ -161,13 +172,25 @@ const Register = () => {
           ) : (
             <button
               type="submit"
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600"
+              className="w-1/4 bg-green-500 text-white py-2 rounded-md hover:bg-green-600"
             >
               Submit
             </button>
           )}
         </div>
       </form>
+
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-600">
+          Already have an account?{' '}
+          <a
+            href="/login"
+            className="text-primary hover:underline"
+          >
+            Login here
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
