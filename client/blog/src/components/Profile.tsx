@@ -50,7 +50,7 @@ const Profile = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-md shadow-md">
+      <div className="max-w-md mx-auto mt-20 p-6 border bg-[#e5ecfc] border-gray-300 rounded-md shadow-md">
         {token && !error && (
           <>
             <h2 className="text-2xl font-semibold mb-4 text-primary">Profile</h2>

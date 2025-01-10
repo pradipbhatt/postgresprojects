@@ -4,7 +4,7 @@ const services = [
   {
     title: "Personalized Learning Paths",
     description: "Our AI system tailors learning paths based on your progress and performance, ensuring that each student receives a customized education experience.",
-    icon: "📚",  // You can use icons here or import them from a library like React Icons
+    icon: "📚",
   },
   {
     title: "Real-Time Progress Tracking",
@@ -43,10 +43,21 @@ const Services = () => {
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out"
+              className="relative bg-[#e5ecfc] p-6 rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:translate-y-[-5px] hover:bg-opacity-80 hover:backdrop-blur-md"
+              style={{
+                boxShadow: 'rgba(0, 0, 0, 0.2) 0px 7px 29px 0px', // Drop shadow
+                filter: 'blur(0px)', // Subtle blur effect
+              }}
             >
+              <div
+                className="absolute inset-0 rounded-lg opacity-30 bg-gradient-to-br from-white to-primary shadow-inner"
+                aria-hidden="true"
+              ></div>
+              {/* Icon */}
               <div className="text-5xl text-center mb-4">{service.icon}</div>
+              {/* Title */}
               <h3 className="text-xl font-semibold text-primary mb-2">{service.title}</h3>
+              {/* Description */}
               <p className="text-lg text-dark">{service.description}</p>
             </div>
           ))}

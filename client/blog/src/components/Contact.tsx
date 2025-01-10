@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaUser, FaEnvelope, FaClipboardList, FaRegComment, FaPaperPlane } from 'react-icons/fa';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 const Contact = () => {
   const [name, setName] = useState('');
@@ -37,9 +38,9 @@ const Contact = () => {
       <Navbar />
       <div className="max-w-4xl mx-auto mt-10 p-6">
         <h2 className="text-3xl font-semibold text-center mb-6 text-primary">📞 Contact Us</h2>
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="bg-[#e5ecfc] p-8 rounded-lg shadow-md">
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 flex items-center">
+            <label htmlFor="name" className=" text-sm font-medium text-gray-700 flex items-center">
               <FaUser className="mr-2 text-blue-500" /> Full Name
             </label>
             <input
@@ -109,6 +110,7 @@ const Contact = () => {
           </button>
         </form>
       </div>
+      <Footer/>
     </>
   );
 };

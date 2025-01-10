@@ -4,7 +4,7 @@ const About = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-4xl mx-auto mt-10 p-6 border border-gray-300 rounded-md shadow-md">
+      <div className="max-w-4xl mx-auto mt-10 p-6 border border-gray-300 rounded-md shadow-md bg-[#e5ecfc]">
         <h2 className="text-3xl font-semibold mb-4 text-primary">About SOE Intel</h2>
         <p className="text-lg mb-6 text-dark">
           SOE Intel is an AI-powered platform designed to provide personalized education solutions for students, educators, and academic institutions.
