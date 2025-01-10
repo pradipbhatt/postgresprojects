@@ -1,30 +1,31 @@
-import { DataTypes } from "sequelize";
+// models/userSchema.js
+import { DataTypes } from 'sequelize';
 
-// Function to create the User model
 const createUserModel = (sequelize) => {
-    const User = sequelize.define('User', {
+    return sequelize.define('User', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
         name: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            allowNull: false,
         },
         email: {
             type: DataTypes.STRING,
+            unique: true,
             allowNull: false,
-            isLowercase: true,
-            unique: true
         },
         designation: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         },
         empID: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
-        }
+        },
     });
-
-    return User;
 };
 
-// Export the function to create the User model
 export default createUserModel;
