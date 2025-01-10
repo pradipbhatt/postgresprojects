@@ -1,27 +1,99 @@
-import { sequelize } from '../postgres/postgres.js';  // Correctly import the sequelize instance
-import createUserModel from '../models/userSchema.js'; // Import the function to create the model
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import createUserModel from '../models/userSchema.js';
+import { sequelize } from '../postgres/postgres.js';
 
-// Generate the User model using the sequelize instance
 const User = createUserModel(sequelize);
 
-// Create a new user
 export const createUser = async (req, res) => {
     try {
-        const { name, email, designation, empID } = req.body;
+        const { name, email, designation, empID, password } = req.body;
 
-        // Check if all required fields are provided
-        if (!name || !email || !designation || !empID) {
+        // Check for missing fields
+        if (!name || !email || !designation || !empID || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        // Create a new user in the database
-        const newUser = await User.create({ name, email, designation, empID });
+        // Check if email or empID is already in use
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already in use' });
+        }
 
-        // Return the created user as the response
-        res.status(201).json(newUser);
+        const existingEmpID = await User.findOne({ where: { empID } });
+        if (existingEmpID) {
+            return res.status(400).json({ message: 'Employee ID already in use' });
+        }
+
+        // Create a new user
+        const newUser = await User.create({ name, email, designation, empID, password });
+
+        res.status(201).json({ message: 'User created successfully', user: newUser });
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ message: 'Error creating user', error: error.message });
+    }
+};
+
+
+export const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
+    // Check if both email and password are provided
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    try {
+        // Find user by email
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('User found:', user); // Log the user object for debugging
+
+        // Check if the password is correct
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        console.log('Password match successful'); // Log password match success
+
+        // Generate JWT token using a hardcoded secret key
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            'your-hardcoded-secret-key', // Use your custom hardcoded secret key
+            { expiresIn: '1h' }
+        );
+
+        console.log('JWT Token generated:', token); // Log the generated token
+
+        // Send token as a cookie (secure flag set based on environment)
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false, // Disable secure cookies for development
+            sameSite: 'Strict',
+            maxAge: 3600000, // 1 hour
+        });
+
+        // Return the token and its payload in the response
+        res.status(200).json({
+            message: 'Login successful',
+            token: token,  // Send the JWT token itself
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                designation: user.designation,
+                empID: user.empID,
+            },
+            tokenPayload: jwt.decode(token),  // Decode the token to get its payload
+        });
+    } catch (error) {
+        console.error('Error logging in user:', error);
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
 
@@ -63,15 +135,16 @@ export const updateUser = async (req, res) => {
         const user = await User.findByPk(req.params.id);
 
         if (user) {
-            const { name, email, designation, empID } = req.body;
+            const { name, email, designation, empID, password } = req.body;
 
-            // Check if all required fields are provided
-            if (!name || !email || !designation || !empID) {
+            if (!name || !email || !designation || !empID || !password) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
 
-            // Update the user in the database
-            await user.update({ name, email, designation, empID });
+            // Hash the password before updating
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            await user.update({ name, email, designation, empID, password: hashedPassword });
 
             res.status(200).json(user);
         } else {
